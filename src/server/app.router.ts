@@ -1,18 +1,18 @@
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
+import { initTRPC } from "@trpc/server";
+import superjson from "superjson";
 import {
-  createNoteController,
-  deleteNoteController,
-  findAllNoteController,
-  findNoteController,
-  updateNoteController,
-} from './note.controller';
+  createBlogController,
+  deleteBlogController,
+  findAllBlogController,
+  findBlogController,
+  updateBlogController,
+} from "./note.controller";
 import {
-  createNoteSchema,
+  createBlogSchema,
   filterQuery,
   params,
-  updateNoteSchema,
-} from './note.schema';
+  updateBlogSchema,
+} from "./blog.schema";
 
 const t = initTRPC.create({
   transformer: superjson,
@@ -21,29 +21,29 @@ const t = initTRPC.create({
 export const appRouter = t.router({
   getHello: t.procedure.query((req) => {
     return {
-      message: 'Hello from note app',
+      message: "Hello from blog app",
     };
   }),
 
-  createNote: t.procedure.input(createNoteSchema).mutation(({ input }) => {
-    createNoteController({ input });
+  createBlog: t.procedure.input(createBlogSchema).mutation(({ input }) => {
+    createBlogController({ input });
   }),
 
-  updateNote: t.procedure.input(updateNoteSchema).mutation(({ input }) => {
-    updateNoteController({ paramsInput: input.params, input: input.body });
+  updateBlog: t.procedure.input(updateBlogSchema).mutation(({ input }) => {
+    updateBlogController({ paramsInput: input.params, input: input.body });
   }),
 
-  deleteNote: t.procedure.input(params).mutation(({ input }) => {
-    deleteNoteController({ paramsInput: input });
+  deleteBlog: t.procedure.input(params).mutation(({ input }) => {
+    deleteBlogController({ paramsInput: input });
   }),
 
-  getNote: t.procedure.input(params).query(({ input }) => {
-    findNoteController({ paramsInput: input });
+  getBlog: t.procedure.input(params).query(({ input }) => {
+    findBlogController({ paramsInput: input });
   }),
 
-  getNotes: t.procedure
+  getBlogs: t.procedure
     .input(filterQuery)
-    .query(({ input }) => findAllNoteController({ filterQuery: input })),
+    .query(({ input }) => findAllBlogController({ filterQuery: input })),
 });
 
 export type AppRouter = typeof appRouter;

@@ -10,15 +10,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Note {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String @unique
-  content String
-  category String?
-  published Boolean? @default(false)
+model Blog {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  title    String   @unique
+  image    String
+  category String[]
+  desc     String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map(name: "notes")
+  @@map(name: "blogs")
 }

@@ -1,42 +1,42 @@
-import { Prisma, PrismaClient } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
+import { Prisma, PrismaClient } from "@prisma/client";
+import { TRPCError } from "@trpc/server";
 import {
-  CreateNoteInput,
+  CreateBlogInput,
   FilterQueryInput,
   params,
   ParamsInput,
-  UpdateNoteInput,
-} from './note.schema';
+  UpdateBlogInput,
+} from "./blog.schema";
 
 const prisma = new PrismaClient();
 
-export const createNoteController = async ({
+export const createBlogController = async ({
   input,
 }: {
-  input: CreateNoteInput;
+  input: CreateBlogInput;
 }) => {
   try {
-    const note = await prisma.note.create({
+    const blog = await prisma.blog.create({
       data: {
         title: input.title,
-        content: input.content,
+        image: input.image,
         category: input.category,
-        published: input.published,
+        desc: input.desc,
       },
     });
 
     return {
-      status: 'success',
+      status: "success",
       data: {
-        note,
+        blog,
       },
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
+      if (error.code === "P2002") {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Note with that title already exists',
+          code: "CONFLICT",
+          message: "Blog with that title already exists",
         });
       }
     }
@@ -44,29 +44,29 @@ export const createNoteController = async ({
   }
 };
 
-export const updateNoteController = async ({
+export const updateBlogController = async ({
   paramsInput,
   input,
 }: {
   paramsInput: ParamsInput;
-  input: UpdateNoteInput['body'];
+  input: UpdateBlogInput["body"];
 }) => {
   try {
-    const updatedNote = prisma.note.update({
-      where: { id: paramsInput.noteId },
+    const updatedBlog = prisma.blog.update({
+      where: { id: paramsInput.blogId },
       data: input,
     });
 
     return {
-      status: 'success',
-      note: updatedNote,
+      status: "success",
+      blog: updatedBlog,
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
+      if (error.code === "P2002") {
         throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'Note with that title already exists',
+          code: "CONFLICT",
+          message: "Blog with that title already exists",
         });
       }
     }
@@ -74,33 +74,33 @@ export const updateNoteController = async ({
   }
 };
 
-export const findNoteController = async ({
+export const findBlogController = async ({
   paramsInput,
 }: {
   paramsInput: ParamsInput;
 }) => {
   try {
-    const note = await prisma.note.findFirst({
-      where: { id: paramsInput.noteId },
+    const blog = await prisma.blog.findFirst({
+      where: { id: paramsInput.blogId },
     });
 
-    if (!note) {
+    if (!blog) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Note with this ID not found',
+        code: "NOT_FOUND",
+        message: "Blog with this ID not found",
       });
     }
 
     return {
-      status: 'success',
-      note,
+      status: "success",
+      blog,
     };
   } catch (error) {
     throw error;
   }
 };
 
-export const findAllNoteController = async ({
+export const findAllBlogController = async ({
   filterQuery,
 }: {
   filterQuery: FilterQueryInput;
@@ -110,35 +110,35 @@ export const findAllNoteController = async ({
     const limit = filterQuery.limit || 10;
     const skip = (page - 1) * limit;
 
-    const notes = await prisma.note.findMany({ skip, take: limit });
+    const blogs = await prisma.blog.findMany({ skip, take: limit });
 
     return {
-      status: 'success',
-      results: notes.length,
-      notes,
+      status: "success",
+      results: blogs.length,
+      blogs,
     };
   } catch (error) {
     throw error;
   }
 };
 
-export const deleteNoteController = async ({
+export const deleteBlogController = async ({
   paramsInput,
 }: {
   paramsInput: ParamsInput;
 }) => {
   try {
-    await prisma.note.delete({ where: { id: paramsInput.noteId } });
+    await prisma.blog.delete({ where: { id: paramsInput.blogId } });
 
     return {
-      status: 'success',
+      status: "success",
     };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
+      if (error.code === "P2025") {
         throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Note with that ID not found',
+          code: "NOT_FOUND",
+          message: "Blog with that ID not found",
         });
       }
     }
